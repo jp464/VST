@@ -1,0 +1,92 @@
+% ========= = arr=======================================
+% Visual Search Task Data Analysis Pipeline
+% ==================================================
+
+% Raw data file name
+file = '/Users/stan.park712/Library/CloudStorage/Box-Box/jp464/Neuro378/projectFiles/data/vstData_anon.xlsx';
+subjectNum = 2;
+
+% task = 'circleA';
+% task = 'circleB';
+task = 'orientation';
+
+circleA_T = process(subjectNum, 'circleA', file)
+circleB_T = process(subjectNum, 'circleB', file)
+orientation_T = process(subjectNum, 'orientation', file)
+
+    
+% Matrix view of complete averaged table
+circleA_M = table2array(circleA_T);
+circleB_M = table2array(circleB_T);
+orientation_M = table2array(circleC_T);
+
+% Average of all subjects 
+circleA_avgM = mean(circleA_M, 1);
+circleB_avgM = mean(circleB_M, 1);
+orientation_avgM = mean(orientation_M, 1);
+
+% Plot data
+distractors = 1:length(proM);
+plot(distractors, circleA_avgM, 'mx')
+hold on
+p = polyfit(distractors, avgM, 1);
+x1 = linspace(0, 6);
+y1 = polyval(p, x1);
+plot(x1, y1);
+hold off
+title("Search Time for Varying Number of Distractors");
+xlabel("Number of distractors");
+ylabel("Search time (sec)");
+
+function proT = process(subjectNum, task, file)
+    % Construct processed table 
+    id = [];
+    col1 = [];
+    col2 = [];
+    col3 = [];
+    col4 = [];
+    col5 = [];
+    col6 = [];
+    proT = table(col1, col2, col3, col4, col5, col6);
+    
+    % Add average values for each subject into table
+    for i = 1:subjectNum
+        if i < 10
+            id = strcat('0', int2str(i), task);
+        else
+            id = strcat(int2str(i), task);
+        end
+    
+        rawT = readtable(file, 'sheet', id);
+        rawT.(1) = [];
+        append = addT(rawT, 1, width(rawT) - 1, []);
+        proT = [proT; num2cell(append)];
+    end
+end
+
+
+% Find the average time for each column
+function avg = average(T, i)
+    T = T(:, i:i+1);
+    T = T((T.(2) == 1 & T.(1) ~= 0), 1);
+    avg = mean(T.(1));
+end
+
+% Find array of average values for each subject
+function ret = addT(T, initial, final, array)
+    for i = initial:2:final
+        array(end + 1) = average(T, i);
+        ret = array; 
+    end
+end
+
+
+    
+
+
+    
+    
+
+
+
+
