@@ -1,12 +1,12 @@
 # ===================================================================
-
-
 from psychopy import core, visual, event
 import numpy as np
 import random
 import pandas as pd
 import circle 
 import arrow
+
+excelPath = "/Users/stan.park712/Library/CloudStorage/Box-Box/jp464/Neuro378/projectFiles/data/vstData.xlsx"
 
 id = input("Select 1: circleA 2. circleB 3: orientation")
 name = input("Enter your name")
@@ -191,7 +191,7 @@ if 'q' not in ret:
         }
     )
 
-    with pd.ExcelWriter('/Users/stan.park712/Desktop/Neuro378/indptProject/neuro378indptProject/vstData.xlsx', mode = 'a') as writer:
+    with pd.ExcelWriter(excelPath, mode = 'a') as writer:
         df.to_excel(writer, sheet_name = name)
 
 
