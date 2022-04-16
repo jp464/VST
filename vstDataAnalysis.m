@@ -4,52 +4,77 @@
 
 % Raw data file name
 file = '/Users/stan.park712/Library/CloudStorage/Box-Box/jp464/Neuro378/projectFiles/data/vstData_anon.xlsx';
-subjectNum = 3;
+subjectNum = 8; 
+e = 1;
 
-% e = 1;
-e = 0;
-
-circleA_T = process(subjectNum, 'circleA', file, e)
-circleB_T = process(subjectNum, 'circleB', file, e)
-orientation_T = process(subjectNum, 'orientation', file, e)
-
-    
+circleA_T = process(subjectNum, 'circleA', file, e);
+circleB_T = process(subjectNum, 'circleB', file, e);
+orientation_T = process(subjectNum, 'orientation', file, e);
+ 
 % Matrix view of complete averaged table
 circleA_M = table2array(circleA_T);
 circleB_M = table2array(circleB_T);
 orientation_M = table2array(orientation_T);
 
 % Average of all subjects 
-circleA_avgM = mean(circleA_M, 1);
-circleB_avgM = mean(circleB_M, 1);
-orientation_avgM = mean(orientation_M, 1);
+circleA_avgM = mean(circleA_M, 1, 'omitnan');
+circleB_avgM = mean(circleB_M, 1, 'omitnan');
+orientation_avgM = mean(orientation_M, 1, 'omitnan');
+
+mean(circleA_avgM)
+mean(circleB_avgM)
+mean(orientation_avgM)
 
 % Plot data
-distractors = 1:length(proM);
+distractors = 1:6;
 plot(distractors, circleA_avgM, 'bx')
 hold on
 plot(distractors, circleB_avgM, 'gx')
 plot(distractors, orientation_avgM, 'rx')
 
-p1 = polyfit(distractors, circleA_avgM, 1);
-x1 = linspace(0, 6);
-y1 = polyval(p1, x1);
+mdl_circleA = fitlm(distractors, circleA_avgM);
+mdl_circleB = fitlm(distractors, circleB_avgM);
+% mdl_orientation = fitlm(distractors, orientation_avgM);
+mdl_orientation = fitlm(distractors(2:length(distractors)), orientation_avgM(2: length(orientation_avgM)));
 
-p2 = polyfit(distractors, circleB_avgM, 1);
-x2 = linspace(0, 6);
-y2 = polyval(p2, x1);
+display("task1 lm summary");
+mdl_circleA
+display("task2 lm summary");
+mdl_circleB
+display("task3 lm summary");
+mdl_orientation
 
-p3 = polyfit(distractors, orientation_avgM, 1);
-x3 = linspace(0, 6);
-y3 = polyval(p3, x1);
+p_circleA = plot(mdl_circleA)
+p_circleB = plot(mdl_circleB)
+p_orientation = plot(mdl_orientation)
+set(p_circleA(1), 'Color', 'b');
+set(p_circleA(2), 'Color', 'b');
+set(p_circleA(3), 'Color', 'b');
+set(p_circleA(4), 'Color', 'b');
 
-plot(x1, y1, 'blue');
-plot(x2, y2, 'green');
-plot(x3, y3, 'red');
+set(p_circleB(1), 'Color', 'g');
+set(p_circleB(2), 'Color', 'g');
+set(p_circleB(3), 'Color', 'g');
+set(p_circleB(4), 'Color', 'g');
+
+set(p_orientation(1), 'Color', 'r');
+set(p_orientation(2), 'Color', 'r');
+set(p_orientation(3), 'Color', 'r');
+set(p_orientation(4), 'Color', 'r');
+legend([p_circleA(2), p_circleB(2), p_orientation(2)], 'task1', 'task2', 'task3')
+
 hold off
-title("Search Time for Varying Number of Distractors");
-xlabel("Number of distractors");
+title("Search Time for Varying Number of Features");
+xlabel("Number of features");
 ylabel("Search time (sec)");
+
+% [p, tbl, stats] = anova1(circleA_M);
+% [p, tbl, stats] = anova1(circleB_M);
+% [p, tbl, stats] = anova1(orientation_M);
+% orientation_M(:, 1) = [];
+% [p, tbl, stats] = anova1(orientation_M);
+
+
 
 function proT = process(subjectNum, task, file, e)
     % Construct processed table 
@@ -82,7 +107,7 @@ end
 function avg = average(T, i, e)
     T = T(:, i:i+1);
     T = T((T.(2) == e & T.(1) ~= 0), 1);
-    avg = mean(T.(1));
+    avg = mean(T.(1), 'omitnan');
 end
 
 % Find array of average values for each subject
