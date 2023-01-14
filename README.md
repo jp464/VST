@@ -5,7 +5,7 @@ Install [PsychoPy](https://www.psychopy.org/). The library is required to run th
 
 To install the pipeline, type:
 ```
-(base) C:/Users/username> git clone git@github.c
+(base) C:/Users/username> git clone git@github.com:jp464/VST.git
 ```  
 ## Usage
 
