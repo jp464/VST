@@ -14,6 +14,6 @@ Then go to the reaching directory:
 (base) C:/Users/username> cd VST
 ```  
 Run the program:
-'''
+```
 (base) C:/Users/username> python vst.py
-'''
+```
